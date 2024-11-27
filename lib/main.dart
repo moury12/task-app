@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:task_management/core/constants/app_routes.dart';
+import 'package:task_management/core/init/bindings.dart';
 import 'package:task_management/view/auth/splash_view.dart';
 
 void main() async{
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
 
         getPages: AppRoutes.routes(),
         initialRoute: SplashView.routeName,
+        initialBinding: InitialBinding(),
       ),
     );
   }

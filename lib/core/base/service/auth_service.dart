@@ -27,7 +27,7 @@ class AuthService {
         showCustomSnackbar(
             title: responseData['status'],
             message: responseData['message'],
-            type: SnackBarType.failed);
+            type: SnackBarType.success);
         return token;
       } else {
         showCustomSnackbar(
