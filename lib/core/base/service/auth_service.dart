@@ -4,14 +4,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:task_management/core/base/model/user_model.dart';
 import 'package:task_management/core/init/api_client.dart';
 
 class AuthService {
   static Future<Map<String, dynamic>> loginRequest({
     required String email,
     required String password,
-  }) async {
+  })
+  async {
     try {
       final url = Uri.parse(ApiClient.loginUrl);
       final headers = {
