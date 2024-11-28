@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:task_management/core/constants/app_routes.dart';
-import 'package:task_management/core/init/bindings.dart';
+import 'package:task_management/core/base/bloc/splash/splash_bloc.dart';
+import 'package:task_management/core/base/bloc/user/user_bloc.dart';
+import 'package:task_management/view/auth/login_view.dart';
 import 'package:task_management/view/auth/splash_view.dart';
+
+import 'view/home/home_view.dart';
+import 'view/user-profile/user_profile_view.dart';
 
 void main() async{
   await Hive.initFlutter();
@@ -22,17 +26,27 @@ class MyApp extends StatelessWidget {
       designSize: const Size(360, 690),
       minTextAdapt: true,
       splitScreenMode: true,
-      child: GetMaterialApp(
-        title: 'Task Management',
-        theme: ThemeData(
-
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+      child: MultiBlocProvider(
+        providers: [
+         BlocProvider(create: (context) => SplashBloc(),),
+         BlocProvider(create: (context) => UserBloc(),),
+        ],
+        child: MaterialApp(
+          title: 'Task Management',
+          theme: ThemeData(
+        
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+        
+        
+        home: const SplashView(),
+          routes: {
+            LoginView.routeName: (context) => const LoginView(),
+            HomeView.routeName: (context) => const HomeView(),
+            UserProfileView.routeName: (context) => const UserProfileView(),
+          },
         ),
-
-        getPages: AppRoutes.routes(),
-        initialRoute: SplashView.routeName,
-        initialBinding: InitialBinding(),
       ),
     );
   }

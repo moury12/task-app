@@ -1,17 +1,17 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:http/http.dart' as http;
+import 'package:task_management/core/base/model/user_model.dart';
 import 'package:task_management/core/init/api_client.dart';
-import 'package:task_management/core/utils/helper_function.dart';
 
 class AuthService {
-  static Future<String> loginRequest({
+  static Future<Map<String, dynamic>> loginRequest({
     required String email,
     required String password,
   }) async {
-    String token = '';
     try {
       final url = Uri.parse(ApiClient.loginUrl);
       final headers = {
@@ -21,23 +21,45 @@ class AuthService {
       final body = jsonEncode({'email': email, 'password': password});
       final response = await http.post(url, headers: headers, body: body);
       final responseData = json.decode(response.body);
+      log(responseData.toString());
       if (responseData['status'] != null &&
           responseData['status'] == 'Success') {
-        token = responseData['data']['token'];
-        showCustomSnackbar(
-            title: responseData['status'],
-            message: responseData['message'],
-            type: SnackBarType.success);
-        return token;
+        return responseData;
       } else {
-        showCustomSnackbar(
-            title: responseData['status'],
-            message: responseData['error'],
-            type: SnackBarType.failed);
+        return responseData;
       }
     } catch (e) {
       debugPrint(e.toString());
     }
-    return token;
+    return {};
+  }
+
+  static Future<Map<String, dynamic>> fetchUserProfile({required String token}) async {
+
+    try {
+      final url = Uri.parse(ApiClient.userProfileUrl);
+      final headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+
+      final response = await http.get(
+        url,
+        headers: headers,
+      );
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      log(responseData.toString());
+      if (responseData['status'] != null &&
+          responseData['status'] == 'Success') {
+
+        return responseData;
+      } else {
+        return responseData;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return {};
   }
 }
