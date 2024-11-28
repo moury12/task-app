@@ -9,3 +9,9 @@ class AuthLoginEvent extends AuthEvent{
   AuthLoginEvent({required this.email, required this.password});
 
 }
+class AuthRegistrationEvent extends AuthEvent{
+  final Map<String , dynamic> body;
+  final File file;
+
+  AuthRegistrationEvent( {required this.body,required this.file});
+}

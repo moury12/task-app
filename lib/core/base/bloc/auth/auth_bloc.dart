@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -20,11 +21,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         String token = response['data']['token'];
         HiveBoxes.getUserData().put('token', token);
         emit(AuthSuccessState(message: response['message']));
-      }else{
-
-        emit(AuthErrorState(message:response['error'] ));
+      } else {
+        emit(AuthErrorState(message: response['error']));
         log('error');
       }
     });
+    on<AuthRegistrationEvent>((event, emit) async {
+      Map<String, dynamic> response =
+          await AuthService.registrationRequest(body: event.body,file: event.file);
+      if (response['status'] == 'Success') {
+        emit(AuthSuccessState(message: response['message']));
+      } else {
+        emit(AuthErrorState(message: response['error']));
+      }
+    });
+
   }
 }

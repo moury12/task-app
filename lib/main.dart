@@ -5,9 +5,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:task_management/core/base/bloc/splash/splash_bloc.dart';
 import 'package:task_management/core/base/bloc/user/user_bloc.dart';
 import 'package:task_management/view/auth/login_view.dart';
+import 'package:task_management/view/auth/registration_view.dart';
+import 'package:task_management/view/auth/registration_view.dart';
 import 'package:task_management/view/auth/splash_view.dart';
 import 'package:task_management/view/task/task_view.dart';
 import 'package:task_management/view/task/task_view.dart';
+import 'package:task_management/view/user-profile/edit_profile_view.dart';
+import 'package:task_management/view/user-profile/edit_profile_view.dart';
 
 import 'view/home/home_view.dart';
 import 'view/user-profile/user_profile_view.dart';
@@ -48,6 +52,8 @@ class MyApp extends StatelessWidget {
             HomeView.routeName: (context) => const HomeView(),
             UserProfileView.routeName: (context) => const UserProfileView(),
             TaskView.routeName: (context) => const TaskView(),
+            RegistrationView.routeName: (context) => const RegistrationView(),
+            EditProfileView.routeName: (context) => const EditProfileView(),
           },
         ),
       ),

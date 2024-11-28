@@ -71,7 +71,7 @@ class _HomeViewState extends State<HomeView> {
                 return GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context,
-                        TaskView.routeName, );
+                        TaskView.routeName,arguments: state.taskList[index].sId );
                   },
                   child: Row(
                     children: [

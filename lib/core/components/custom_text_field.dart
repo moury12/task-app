@@ -24,15 +24,16 @@ class CustomTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
   final bool isMultiline;
-
+  final bool obscureText;
   const CustomTextFormField({
     Key? key,
     required this.title,
     required this.hintText,
     required this.controller,
+
     this.validator,
     this.keyboardType = TextInputType.text,
-    this.isMultiline = false,
+    this.isMultiline = false,  this.obscureText=false,
   }) : super(key: key);
 
   @override
@@ -49,6 +50,7 @@ class CustomTextFormField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
+          obscureText: obscureText,
           controller: controller,
           keyboardType: isMultiline ? TextInputType.multiline : keyboardType,
           maxLines: isMultiline ? null : 1,

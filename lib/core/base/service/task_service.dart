@@ -73,9 +73,10 @@ class TaskService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       };
-      final response = await http.delete(url, headers: headers,);
+      log('${ApiClient.getSpecificTaskUrl}$taskId');
+      final response = await http.get(url, headers: headers,);
       final responseData = json.decode(response.body);
-      log(responseData.toString());
+      log('---------${responseData.toString()}');
       if (responseData['status'] != null &&
           responseData['status'] == 'Success') {
         return responseData;

@@ -7,6 +7,7 @@ import 'package:task_management/core/components/custom_button.dart';
 import 'package:task_management/core/components/custom_text_field.dart';
 import 'package:task_management/core/utils/helper_function.dart';
 import 'package:task_management/core/utils/paddings.dart';
+import 'package:task_management/view/auth/registration_view.dart';
 import 'package:task_management/view/home/home_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -34,7 +35,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: BlocConsumer<AuthBloc, AuthState>(
+      body: BlocListener<AuthBloc, AuthState>(
         bloc: authBloc,
         listener: (context, state) {
           log('Current state: $state');
@@ -54,31 +55,34 @@ class _LoginViewState extends State<LoginView> {
             );
           }
         },
-        builder: (context, state) {
-          return Padding(
-            padding: defaultPadding,
-            child: Column(
-              children: [
-                CustomTextField(
-                  controller: emailLoginController,
-                  hintText: 'Enter Email',
-                ),
-                CustomTextField(
-                  controller: passwordLoginController,
-                  hintText: 'Enter password',
-                ),
-                CustomButton(
-                  title: 'Login',
-                  onPressed: () {
-                    authBloc.add(AuthLoginEvent(
-                        email: emailLoginController.text,
-                        password: passwordLoginController.text));
-                  },
-                )
-              ],
-            ),
-          );
-        },
+       child: Padding(
+         padding: defaultPadding,
+         child: Column(
+           children: [
+             CustomTextField(
+               controller: emailLoginController,
+               hintText: 'Enter Email',
+             ),
+             CustomTextField(
+               controller: passwordLoginController,
+               hintText: 'Enter password',
+             ),
+             CustomButton(
+               title: 'Login',
+               onPressed: () {
+                 authBloc.add(AuthLoginEvent(
+                     email: emailLoginController.text,
+                     password: passwordLoginController.text));
+               },
+             ),
+             TextButton(
+                 onPressed: () {
+                   Navigator.pushNamed(context, RegistrationView.routeName);
+                 },
+                 child: Text('Sign up'))
+           ],
+         ),
+       ),
       ),
     );
   }
