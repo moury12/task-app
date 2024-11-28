@@ -38,25 +38,49 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       } catch (e) {
         emit(TaskErrorState(message: 'An error occurred: $e'));
       }
-    });on<DeleteTaskEvent>((event, emit) async {
+    });
+    on<DeleteTaskEvent>((event, emit) async {
       try {
         emit(TaskInitial());
         String? token = HiveBoxes.getUserData().get('token');
         if (token != null && token.isNotEmpty) {
-          Map<String, dynamic> responseData = await TaskService.deleteTask(token: token, taskId: event.taskId);
+          Map<String, dynamic> responseData =
+              await TaskService.deleteTask(token: token, taskId: event.taskId);
           if (responseData['status'] != null &&
               responseData['status'] == 'Success') {
             emit(TaskCreatedState(message: responseData['message']));
           } else {
             emit(TaskErrorState(message: "Something Went wrong"));
           }
-      }else {
+        } else {
           emit(TaskErrorState(message: 'Provide valid token'));
         }
-      }catch (e) {
+      } catch (e) {
         emit(TaskErrorState(message: 'An error occurred: $e'));
       }
-    }
-    );
+    });
+    on<FetchSpecificTask>((event, emit) async {
+      try {
+        emit(TaskInitial());
+        String? token = HiveBoxes.getUserData().get('token');
+        if (token != null && token.isNotEmpty) {
+          Map<String, dynamic> responseData =
+              await TaskService.fetchSpecificTask(
+                  token: token, taskId: event.taskId);
+          if (responseData['status'] != null &&
+              responseData['status'] == 'Success') {
+            TaskModel taskModel = TaskModel.fromJson(responseData['data']);
+
+            emit(SpecificTaskLoadedState(task: taskModel));
+          } else {
+            emit(TaskErrorState(message: "Something Went wrong"));
+          }
+        } else {
+          emit(TaskErrorState(message: 'Provide valid token'));
+        }
+      } catch (e) {
+        emit(TaskErrorState(message: 'An error occurred: $e'));
+      }
+    });
   }
 }

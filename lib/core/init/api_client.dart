@@ -5,4 +5,5 @@ class ApiClient {
   static String get createTaskUrl => '$baseUrl/task/create-task';
   static String get getAllTaskUrl => '$baseUrl/task/get-all-task';
   static String get deleteTaskUrl => '$baseUrl/task/delete-task/';
+  static String get getSpecificTaskUrl => '$baseUrl/task/get-task/';
 }

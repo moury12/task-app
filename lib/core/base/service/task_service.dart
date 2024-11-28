@@ -37,9 +37,37 @@ class TaskService {
 
     required String taskId,
     required String token,
-  }) async {
+  })
+  async {
     try {
       final url = Uri.parse('${ApiClient.deleteTaskUrl}$taskId');
+      final headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+      final response = await http.delete(url, headers: headers,);
+      final responseData = json.decode(response.body);
+      log(responseData.toString());
+      if (responseData['status'] != null &&
+          responseData['status'] == 'Success') {
+        return responseData;
+      } else {
+        return responseData;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return {};
+  }
+  static Future<Map<String, dynamic>> fetchSpecificTask({
+
+    required String taskId,
+    required String token,
+  })
+  async {
+    try {
+      final url = Uri.parse('${ApiClient.getSpecificTaskUrl}$taskId');
       final headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

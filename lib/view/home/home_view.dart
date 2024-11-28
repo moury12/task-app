@@ -5,6 +5,7 @@ import 'package:task_management/core/components/custom_text_field.dart';
 import 'package:task_management/core/utils/boxes.dart';
 import 'package:task_management/core/utils/helper_function.dart';
 import 'package:task_management/view/auth/login_view.dart';
+import 'package:task_management/view/task/task_view.dart';
 import 'package:task_management/view/user-profile/user_profile_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -67,16 +68,22 @@ class _HomeViewState extends State<HomeView> {
             return ListView.builder(
               itemCount: state.taskList.length,
               itemBuilder: (context, index) {
-                return Row(
-                  children: [
-                    Text(state.taskList[index].title ?? ''),
-                    IconButton(
-                        onPressed: () {
-                          taskBloc.add(DeleteTaskEvent(
-                              taskId: state.taskList[index].sId ?? ''));
-                        },
-                        icon: Icon(Icons.delete))
-                  ],
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context,
+                        TaskView.routeName, );
+                  },
+                  child: Row(
+                    children: [
+                      Text(state.taskList[index].title ?? ''),
+                      IconButton(
+                          onPressed: () {
+                            taskBloc.add(DeleteTaskEvent(
+                                taskId: state.taskList[index].sId ?? ''));
+                          },
+                          icon: Icon(Icons.delete))
+                    ],
+                  ),
                 );
               },
             );

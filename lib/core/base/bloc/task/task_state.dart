@@ -9,6 +9,10 @@ class AllTaskLoadedState extends TaskState {
   final List<TaskModel> taskList;
 
   AllTaskLoadedState({required this.taskList});
+}class SpecificTaskLoadedState extends TaskState {
+  final TaskModel task;
+
+  SpecificTaskLoadedState({required this.task});
 }
 
 class TaskCreatedState extends TaskState {
