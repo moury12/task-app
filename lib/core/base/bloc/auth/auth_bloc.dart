@@ -5,7 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:task_management/core/base/service/auth_service.dart';
 import 'package:task_management/core/utils/boxes.dart';
-import 'package:task_management/core/utils/helper_function.dart';
+
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -22,7 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         HiveBoxes.getUserData().put('token', token);
         emit(AuthSuccessState(message: response['message']));
       } else {
-        emit(AuthErrorState(message: 'Login not successful'));
+        emit(AuthErrorState(message: response['error']??'Login not successful'));
         log('error');
       }
     });

@@ -13,7 +13,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool isPassword;
 
   const CustomTextFormField({
-    Key? key,
+    super.key,
     required this.title,
     required this.hintText,
     required this.controller,
@@ -21,7 +21,7 @@ class CustomTextFormField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.isMultiline = false,
     this.isPassword = false,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();

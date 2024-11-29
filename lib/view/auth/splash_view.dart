@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_management/core/base/bloc/splash/splash_bloc.dart';
 import 'package:task_management/core/constants/image_constant.dart';
 import 'package:task_management/core/constants/text_style_constant.dart';
-import 'package:task_management/main.dart';
 import 'package:task_management/view/auth/login_view.dart';
 import 'package:task_management/view/home/home_view.dart';
 
@@ -28,8 +27,9 @@ class _SplashViewState extends State<SplashView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<SplashBloc, SplashState>(
-        listener: (context, state) {
+        listener: (context, state) async{
         if(state is SplashLoadedState){
+          await Future.delayed(const Duration(seconds: 2));
           if (state.isLoggedIn) {
             Navigator.pushReplacementNamed(context, HomeView.routeName);
           } else {

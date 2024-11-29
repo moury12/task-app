@@ -60,6 +60,8 @@ class _RegistrationViewState extends State<RegistrationView> {
               title: "Success",
               message: state.message,
             );
+            clearControllers();
+            Navigator.pushNamedAndRemoveUntil(context, LoginView.routeName,(route) => false,);
           } else if (state is AuthErrorState) {
             SnackbarService.showSnackbar(
               context: context,
@@ -154,25 +156,24 @@ class _RegistrationViewState extends State<RegistrationView> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate() &&
-                            _imageFile != null) {
-                          authBloc.add(AuthRegistrationEvent(body: {
-                            "firstName": firstNameController.text,
-                            "lastName": lastNameController.text,
-                            "email": emailController.text,
-                            "password": passwordController.text,
-                            "address": addressController.text,
-                          }, file: _imageFile!));
-                          clearControllers();
-                        }
-                        log(_imageFile.toString());
-                      },
-                      title: 'Register',
-                    ),
+                  CustomButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate() &&
+                          _imageFile != null) {
+                        authBloc.add(AuthRegistrationEvent(body: {
+                          "firstName": firstNameController.text,
+                          "lastName": lastNameController.text,
+                          "email": emailController.text,
+                          "password": passwordController.text,
+                          "address": addressController.text,
+                        }, file: _imageFile!));
+
+                      }else if(_imageFile == null){
+                        SnackbarService.showSnackbar(context: context, message: "Provide an image",isError:true);
+                      }
+                      log(_imageFile.toString());
+                    },
+                    title: 'Register',
                   ),
                   spaceH8,
                   Row(
@@ -201,6 +202,7 @@ void clearControllers(){
     lastNameController.clear();
     _imageFile=null;
 }
+
   Future<void> pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);

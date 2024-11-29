@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_management/core/base/bloc/user/user_bloc.dart';
+import 'package:task_management/core/components/custom_appbar.dart';
 import 'package:task_management/core/components/custom_button.dart';
 import 'package:task_management/core/components/custom_text_field.dart';
+import 'package:task_management/core/constants/image_constant.dart';
 import 'package:task_management/core/init/api_client.dart';
 import 'package:task_management/core/utils/helper_function.dart';
 import 'package:task_management/core/utils/paddings.dart';
@@ -45,7 +47,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: const CustomAppBar(),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -55,7 +57,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 firstNameController.text = state.user.firstName ?? '';
                 lastNameController.text = state.user.lastName ?? '';
                 addressController.text = state.user.address ?? '';
-                imageUrl = state.user.image;
+
               }
               if (state is UserErrorState) {
                 SnackbarService.showSnackbar(
@@ -80,17 +82,24 @@ class _EditProfileViewState extends State<EditProfileView> {
                      if(state is UserLoadedState) {
                         return GestureDetector(
                           onTap: pickImage,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.grey.shade50,
-                            foregroundColor: Colors.black,
-                            radius: 50.r,
-                            backgroundImage: _imageFile != null
-                                ? FileImage(_imageFile!)
-                                : NetworkImage(
-                                    '${ApiClient.baseUrl}/${state.user.image ?? ''}'),
-                            child: _imageFile == null
-                                ? const Icon(Icons.camera_alt, size: 30)
-                                : null,
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.grey.shade50,
+                                foregroundColor: Colors.black,
+                                radius: 50.r,
+                                backgroundImage: _imageFile != null
+                                    ? FileImage(_imageFile!)
+                                    : (state.user.image != null && state.user.image!.isNotEmpty
+                                    ? NetworkImage('${ApiClient.baseUrl}/${state.user.image}')
+                                    : const AssetImage(placeHolderImg) ),
+
+                              ),
+
+                              const Positioned(bottom: 0,
+                                  right: 0,
+                                  child: Icon(Icons.add_a_photo,color: Colors.black,))
+                            ],
                           ),
                         );
                       }
@@ -102,13 +111,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                          radius: 50.r,
                          backgroundImage: _imageFile != null
                              ? FileImage(_imageFile!)
-                             : NetworkImage(
-                             '${ApiClient.baseUrl}/${imageUrl}'),
+                             : const AssetImage(placeHolderImg),
                          child: _imageFile == null
                              ? const Icon(Icons.camera_alt, size: 30)
                              : null,
                        ),
-                     );;
+                     );
                     },
                   ),
                   CustomTextFormField(
@@ -147,7 +155,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             lastName: lastNameController.text,
                             address: addressController.text,
                             file: _imageFile));
-                        print(_imageFile.toString());
+                        debugPrint(_imageFile.toString());
 
                       }
                     },
@@ -168,7 +176,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
-        print(_imageFile);
+
       });
     }
   }

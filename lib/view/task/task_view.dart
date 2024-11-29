@@ -23,12 +23,12 @@ class _TaskViewState extends State<TaskView> {
     log(taskId);
     taskBloc.add(FetchSpecificTask(taskId: taskId));
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(),
       body: BlocBuilder<TaskBloc, TaskState>(
         bloc: taskBloc,
         builder: (context, state) {
           if (state is TaskInitial) {
-            return DefaultCircularProgress();
+            return const DefaultCircularProgress();
           }
           if (state is SpecificTaskLoadedState) {
             return Center(
@@ -43,7 +43,7 @@ class _TaskViewState extends State<TaskView> {
               ),
             );
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
     );

@@ -5,13 +5,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 import 'package:task_management/core/init/api_client.dart';
 
 class AuthService {
   static Future<Map<String, dynamic>> loginRequest({
     required String email,
     required String password,
-  }) async {
+  })
+  async {
     try {
       final url = Uri.parse(ApiClient.loginUrl);
       final headers = {
@@ -63,7 +66,8 @@ class AuthService {
   static Future<Map<String, dynamic>> registrationRequest({
     required Map<String, dynamic> body,
     File? file,
-  }) async {
+  })
+  async {
     try {
       final url = Uri.parse(ApiClient.registrationUrl);
 
@@ -78,13 +82,21 @@ class AuthService {
       });
 
       if (file != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'file', // Key as expected by the backend
-            file.path,
-            // Adjust content type if needed
-          ),
-        );
+        if (await file.exists()) {
+
+          final mimeType = lookupMimeType(file.path) ?? 'application/octet-stream';
+          final mimeSplit = mimeType.split('/');
+
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'file',
+              file.path,
+              contentType: MediaType(mimeSplit[0], mimeSplit[1]),
+            ),
+          );
+        } else {
+          debugPrint('File does not exist');
+        }
       }
 
       final response = await request.send();
@@ -136,58 +148,49 @@ class AuthService {
     required String firstName,
     required String lastName,
     required String address,
-    File? file,
+    required File? file,
     required String token,
-  })
-  async {
-    final url = Uri.parse(ApiClient.updateUserUrl);
-    final headers = {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-
-    var request = http.MultipartRequest('PATCH', url)
-      ..headers.addAll(headers)
-      ..fields['firstName'] = firstName
-      ..fields['lastName'] = lastName
-      ..fields['address'] = address;
-
-    if (file != null) {
-      if (await file.exists()) {
-        // Ensure the file has a proper name
-        final fileName =
-            file.path.split('/').last; // Extracts the file name from the path
-        request.files.add(await http.MultipartFile.fromPath(
-          'file',
-          file.path,
-          filename: fileName, // Ensure the file name is properly attached
-        ));
-      } else {
-        debugPrint('File does not exist: ${file.path}');
-        throw Exception('File does not exist');
-      }
-    }
-
+  }) async {
     try {
-      final response = await request.send();
-      final responseData = await response.stream.bytesToString();
+      final request =
+          http.MultipartRequest('PATCH', Uri.parse(ApiClient.updateUserUrl));
 
-      debugPrint('Response Status: ${response.statusCode}');
-      debugPrint('Response Data: $responseData');
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.fields['firstName'] = firstName;
+      request.fields['lastName'] = lastName;
+      request.fields['address'] = address;
+
+      if (file != null && await file.exists()) {
+        final mimeType =
+            lookupMimeType(file.path) ?? 'application/octet-stream';
+        final mimeSplit = mimeType.split('/');
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'file',
+            file.path,
+            contentType: MediaType(mimeSplit[0], mimeSplit[1]),
+          ),
+        );
+      } else {
+        debugPrint('No file selected or file does not exist.');
+      }
+
+      final response = await request.send();
+      final responseData = await http.Response.fromStream(response);
 
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(responseData);
-        if (jsonResponse['status'] == 'Success') {
-          return jsonResponse;
-        } else {
-          throw jsonResponse;
-        }
+        final data = json.decode(responseData.body);
+        debugPrint('Success: ${data['message']}');
+        return data;
       } else {
-        throw Exception('Server error: ${response.statusCode}');
+        debugPrint('Failed to update profile: ${response.statusCode}');
+        debugPrint('Error details: ${responseData.body}');
       }
     } catch (e) {
-      debugPrint('Error: $e');
-      return {};
+      debugPrint('Error during profile update: $e');
     }
+    return {};
   }
+
 }

@@ -101,27 +101,24 @@ class _LoginViewState extends State<LoginView> {
                  ),
                  spaceH8,
                  spaceH8,
-                 SizedBox(
-                   width: double.infinity,
-                   child: CustomButton(
-                     title: 'Login',
-                     onPressed: () {
-                       if (_formKey.currentState!.validate()){
-                         authBloc.add(AuthLoginEvent(
-                             email: emailLoginController.text,
-                             password: passwordLoginController.text));
-                       }
-                     },
-                   ),
+                 CustomButton(
+                   title: 'Login',
+                   onPressed: () {
+                     if (_formKey.currentState!.validate()){
+                       authBloc.add(AuthLoginEvent(
+                           email: emailLoginController.text,
+                           password: passwordLoginController.text));
+                     }
+                   },
                  ),
                  Row(
                    children: [
-                     Text('New Here?'),
+                     const Text('New Here?'),
                      TextButton(
                          onPressed: () {
                            Navigator.pushNamed(context, RegistrationView.routeName);
                          },
-                         child: Text('Sign up')),
+                         child: const Text('Sign up')),
                    ],
                  )
                ],
@@ -137,4 +134,5 @@ class _LoginViewState extends State<LoginView> {
     passwordLoginController.clear();
 
   }
+
 }

@@ -26,7 +26,9 @@ class CustomDrawer extends StatelessWidget {
                 icon: CupertinoIcons.person_alt_circle,
                 title: 'User Profile',
                 onPressed: () {
+                  Navigator.pop(context);
                   Navigator.pushNamed(context, UserProfileView.routeName);
+
                 },
               ),
               spaceH8,

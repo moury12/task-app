@@ -36,7 +36,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           responseData['status'] == 'Success') {
         emit(UserSuccessState(message: 'Account activated'));
       } else {
-        emit(UserErrorState(message: 'Something went wrong'));
+        emit(UserErrorState(message: 'Account activation not successful'));
       }
     })
     ;on<UpdateProfileEvent>((event, emit) async {
