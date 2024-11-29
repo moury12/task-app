@@ -222,7 +222,9 @@ class _RegistrationViewState extends State<RegistrationView> {
 
   Future<void> pickImage() async {
     final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery,maxWidth: 800,
+          maxHeight: 800,
+          imageQuality: 60,);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
