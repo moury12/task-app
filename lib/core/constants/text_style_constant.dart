@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_management/core/constants/color_constants.dart';
 
 TextStyle textStyle18BoldBlack = TextStyle(
-  fontSize: 18.sp,
+  fontSize: 18,
   fontWeight: FontWeight.bold,
   color: kBlackColor,
 );
