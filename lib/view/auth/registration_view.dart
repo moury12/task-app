@@ -1,16 +1,21 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_management/core/base/bloc/auth/auth_bloc.dart';
+import 'package:task_management/core/components/custom_appbar.dart';
+import 'package:task_management/core/components/custom_button.dart';
 import 'package:task_management/core/components/custom_text_field.dart';
-import 'package:task_management/core/components/custom_text_field.dart';
-import 'package:task_management/core/components/custom_text_field.dart';
-import 'package:task_management/core/components/custom_text_field.dart';
-import 'package:task_management/core/components/custom_text_field.dart';
+
+import 'package:task_management/core/constants/text_style_constant.dart';
 import 'package:task_management/core/utils/helper_function.dart';
+import 'package:task_management/core/utils/sizedboxes.dart';
+
+import 'package:task_management/view/auth/login_view.dart';
 
 class RegistrationView extends StatefulWidget {
   static const String routeName = '/registration';
@@ -45,9 +50,7 @@ class _RegistrationViewState extends State<RegistrationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('User Registration'),
-      ),
+      appBar: const CustomAppBar(),
       body: BlocListener<AuthBloc, AuthState>(
         bloc: authBloc,
         listener: (context, state) {
@@ -72,20 +75,29 @@ class _RegistrationViewState extends State<RegistrationView> {
             key: _formKey,
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    "Hello! Register to get \nstarted",
+                    style: textStyle20BoldBlack,
+                  ),
+                  spaceH8,
                   GestureDetector(
                     onTap: pickImage,
                     child: CircleAvatar(
-                      radius: 50,
+                      backgroundColor: Colors.grey.shade50,
+                      foregroundColor: Colors.black,
+                      radius: 50.r,
                       backgroundImage: _imageFile != null
                           ? FileImage(_imageFile!)
-                          : NetworkImage(
-                              'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'),
+                          : const NetworkImage(
+                              "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"),
                       child: _imageFile == null
-                          ? Icon(Icons.camera_alt, size: 30)
+                          ? Icon(Icons.camera_alt, size: 30.sp)
                           : null,
                     ),
                   ),
+                  spaceH8,
                   CustomTextFormField(
                     controller: firstNameController,
                     title: 'First Name',
@@ -97,11 +109,13 @@ class _RegistrationViewState extends State<RegistrationView> {
                       return null;
                     },
                   ),
+                  spaceH8,
                   CustomTextFormField(
                     controller: lastNameController,
                     title: 'Last Name',
                     hintText: 'Enter your last name',
                   ),
+                  spaceH8,
                   CustomTextFormField(
                     controller: emailController,
                     title: 'Email',
@@ -114,11 +128,12 @@ class _RegistrationViewState extends State<RegistrationView> {
                       return null;
                     },
                   ),
+                  spaceH8,
                   CustomTextFormField(
                     controller: passwordController,
                     title: 'Password',
                     hintText: 'Enter your password',
-                    obscureText: true,
+                    isPassword: true,
                     validator: (value) {
                       if (value == null || value.length < 6) {
                         return 'Password must be at least 6 characters';
@@ -126,6 +141,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                       return null;
                     },
                   ),
+                  spaceH8,
                   CustomTextFormField(
                     controller: addressController,
                     title: 'Address',
@@ -137,23 +153,38 @@ class _RegistrationViewState extends State<RegistrationView> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate() &&
-                          _imageFile != null) {
-                        authBloc.add(AuthRegistrationEvent(body: {
-                          "firstName": firstNameController.text,
-                          "lastName": lastNameController.text,
-                          "email": emailController.text,
-                          "password": passwordController.text,
-                          "address": addressController.text,
-                        }, file: _imageFile!));
-                      }
-                      log(_imageFile.toString());
-                    },
-                    child: Text('Register'),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate() &&
+                            _imageFile != null) {
+                          authBloc.add(AuthRegistrationEvent(body: {
+                            "firstName": firstNameController.text,
+                            "lastName": lastNameController.text,
+                            "email": emailController.text,
+                            "password": passwordController.text,
+                            "address": addressController.text,
+                          }, file: _imageFile!));
+                          clearControllers();
+                        }
+                        log(_imageFile.toString());
+                      },
+                      title: 'Register',
+                    ),
                   ),
+                  spaceH8,
+                  Row(
+                    children: [
+                      const Text('Already have an account?'),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, LoginView.routeName);
+                          },
+                          child: const Text('Login')),
+                    ],
+                  )
                 ],
               ),
             ),
@@ -162,7 +193,14 @@ class _RegistrationViewState extends State<RegistrationView> {
       ),
     );
   }
-
+void clearControllers(){
+    emailController.clear();
+    passwordController.clear();
+    addressController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
+    _imageFile=null;
+}
   Future<void> pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -173,3 +211,4 @@ class _RegistrationViewState extends State<RegistrationView> {
     }
   }
 }
+

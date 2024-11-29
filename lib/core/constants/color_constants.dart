@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-class ColorConstants{
-  static Color kPrimaryColor = Colors.red;
-}
+
+   Color kPrimaryColor = Colors.black;
+   Color kBlackColor = Colors.black;
+   Color kWhiteColor = Colors.white;

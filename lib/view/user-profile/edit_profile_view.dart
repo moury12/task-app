@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_management/core/base/bloc/user/user_bloc.dart';
 import 'package:task_management/core/components/custom_button.dart';
 import 'package:task_management/core/components/custom_text_field.dart';
 import 'package:task_management/core/init/api_client.dart';
 import 'package:task_management/core/utils/helper_function.dart';
+import 'package:task_management/core/utils/paddings.dart';
 
 class EditProfileView extends StatefulWidget {
   static const String routeName = '/edit-profile';
@@ -25,6 +27,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   final TextEditingController addressController = TextEditingController();
   File? _imageFile;
   String? imageUrl;
+
   @override
   void initState() {
     context.read<UserBloc>().add(UserLoadedEvent());
@@ -52,11 +55,11 @@ class _EditProfileViewState extends State<EditProfileView> {
                 firstNameController.text = state.user.firstName ?? '';
                 lastNameController.text = state.user.lastName ?? '';
                 addressController.text = state.user.address ?? '';
-                imageUrl =state.user.image;
+                imageUrl = state.user.image;
               }
               if (state is UserErrorState) {
                 SnackbarService.showSnackbar(
-                  title: "Error",
+                    title: "Error",
                     context: context, message: state.message, isError: true);
               }
               if (state is UserSuccessState) {
@@ -65,66 +68,93 @@ class _EditProfileViewState extends State<EditProfileView> {
                   context: context,
                   message: state.message,
                 );
+                context.read<UserBloc>().add(UserLoadedEvent());
               }
             },
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: pickImage,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _imageFile != null
-                        ? FileImage(_imageFile!)
-                        : NetworkImage('${ApiClient.baseUrl}/${imageUrl??''}'),
-
-                    child: _imageFile == null
-                        ? const Icon(Icons.camera_alt, size: 30)
-                        : null,
+            child: Padding(
+              padding: defaultPadding,
+              child: Column(
+                children: [
+                  BlocBuilder<UserBloc, UserState>(
+                    builder: (context, state) {
+                     if(state is UserLoadedState) {
+                        return GestureDetector(
+                          onTap: pickImage,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.grey.shade50,
+                            foregroundColor: Colors.black,
+                            radius: 50.r,
+                            backgroundImage: _imageFile != null
+                                ? FileImage(_imageFile!)
+                                : NetworkImage(
+                                    '${ApiClient.baseUrl}/${state.user.image ?? ''}'),
+                            child: _imageFile == null
+                                ? const Icon(Icons.camera_alt, size: 30)
+                                : null,
+                          ),
+                        );
+                      }
+                     return GestureDetector(
+                       onTap: pickImage,
+                       child: CircleAvatar(
+                         backgroundColor: Colors.grey.shade50,
+                         foregroundColor: Colors.black,
+                         radius: 50.r,
+                         backgroundImage: _imageFile != null
+                             ? FileImage(_imageFile!)
+                             : NetworkImage(
+                             '${ApiClient.baseUrl}/${imageUrl}'),
+                         child: _imageFile == null
+                             ? const Icon(Icons.camera_alt, size: 30)
+                             : null,
+                       ),
+                     );;
+                    },
                   ),
-                ),
-                CustomTextFormField(
-                  controller: firstNameController,
-                  title: 'First Name',
-                  hintText: 'Enter your first name',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a name';
-                    }
-                    return null;
-                  },
-                ),
-                CustomTextFormField(
-                  controller: lastNameController,
-                  title: 'Last Name',
-                  hintText: 'Enter your last name',
-                ),
-                CustomTextFormField(
-                  controller: addressController,
-                  title: 'Address',
-                  hintText: 'Enter your address',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a Address';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                CustomButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      context.read<UserBloc>().add(UpdateProfileEvent(
-                          firstName: firstNameController.text,
-                          lastName: lastNameController.text,
-                          address: addressController.text,
-                          file: _imageFile ) );
-                      context.read<UserBloc>().add(UserLoadedEvent());
+                  CustomTextFormField(
+                    controller: firstNameController,
+                    title: 'First Name',
+                    hintText: 'Enter your first name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a name';
+                      }
+                      return null;
+                    },
+                  ),
+                  CustomTextFormField(
+                    controller: lastNameController,
+                    title: 'Last Name',
+                    hintText: 'Enter your last name',
+                  ),
+                  CustomTextFormField(
+                    controller: addressController,
+                    title: 'Address',
+                    hintText: 'Enter your address',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a Address';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  CustomButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        context.read<UserBloc>().add(UpdateProfileEvent(
+                            firstName: firstNameController.text,
+                            lastName: lastNameController.text,
+                            address: addressController.text,
+                            file: _imageFile));
+                        print(_imageFile.toString());
 
-                    }
-                  },
-                  title: 'Update',
-                ),
-              ],
+                      }
+                    },
+                    title: 'Update',
+     ),
+                ],
+              ),
             ),
           ),
         ),
@@ -133,11 +163,12 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   Future<void> pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    XFile? pickedFile =
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
+        print(_imageFile);
       });
     }
   }

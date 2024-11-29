@@ -11,8 +11,7 @@ class AuthService {
   static Future<Map<String, dynamic>> loginRequest({
     required String email,
     required String password,
-  })
-  async {
+  }) async {
     try {
       final url = Uri.parse(ApiClient.loginUrl);
       final headers = {
@@ -34,11 +33,11 @@ class AuthService {
     }
     return {};
   }
+
   static Future<Map<String, dynamic>> activeUser({
     required String email,
     required String code,
-  })
-  async {
+  }) async {
     try {
       final url = Uri.parse(ApiClient.activeUserUrl);
       final headers = {
@@ -54,7 +53,6 @@ class AuthService {
         return responseData;
       } else {
         return responseData;
-
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -65,8 +63,7 @@ class AuthService {
   static Future<Map<String, dynamic>> registrationRequest({
     required Map<String, dynamic> body,
     File? file,
-  })
-  async {
+  }) async {
     try {
       final url = Uri.parse(ApiClient.registrationUrl);
 
@@ -85,7 +82,7 @@ class AuthService {
           await http.MultipartFile.fromPath(
             'file', // Key as expected by the backend
             file.path,
-           // Adjust content type if needed
+            // Adjust content type if needed
           ),
         );
       }
@@ -107,10 +104,8 @@ class AuthService {
     }
   }
 
-
   static Future<Map<String, dynamic>> fetchUserProfile(
-      {required String token})
-  async {
+      {required String token}) async {
     try {
       final url = Uri.parse(ApiClient.userProfileUrl);
       final headers = {
@@ -136,37 +131,63 @@ class AuthService {
     }
     return {};
   }
+
   static Future<Map<String, dynamic>> updateProfile({
     required String firstName,
     required String lastName,
     required String address,
     File? file,
-    required token
-  })async{
+    required String token,
+  })
+  async {
     final url = Uri.parse(ApiClient.updateUserUrl);
     final headers = {
       'Accept': 'application/json',
-      'Authorization': 'Bearer $token'
+      'Authorization': 'Bearer $token',
     };
-    var request =http.MultipartRequest('PATCH', url,)
+
+    var request = http.MultipartRequest('PATCH', url)
       ..headers.addAll(headers)
-      ..fields['firstName']=firstName
-      ..fields['lastName']=lastName
-      ..fields['address']=address;
-   if(file!=null) {
-      request.files.add(await http.MultipartFile.fromPath('file', file.path));
+      ..fields['firstName'] = firstName
+      ..fields['lastName'] = lastName
+      ..fields['address'] = address;
+
+    if (file != null) {
+      if (await file.exists()) {
+        // Ensure the file has a proper name
+        final fileName =
+            file.path.split('/').last; // Extracts the file name from the path
+        request.files.add(await http.MultipartFile.fromPath(
+          'file',
+          file.path,
+          filename: fileName, // Ensure the file name is properly attached
+        ));
+      } else {
+        debugPrint('File does not exist: ${file.path}');
+        throw Exception('File does not exist');
+      }
     }
-    try{
+
+    try {
       final response = await request.send();
       final responseData = await response.stream.bytesToString();
-      final jsonResponse = jsonDecode(responseData);
-      if (jsonResponse['status']!= null&&jsonResponse['status']=='Success') {
-        return jsonResponse; // Successful response
+
+      debugPrint('Response Status: ${response.statusCode}');
+      debugPrint('Response Data: $responseData');
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(responseData);
+        if (jsonResponse['status'] == 'Success') {
+          return jsonResponse;
+        } else {
+          throw jsonResponse;
+        }
       } else {
-        throw jsonResponse;
+        throw Exception('Server error: ${response.statusCode}');
       }
-    }catch(e){
-      debugPrint(e.toString());
-    }return{};
+    } catch (e) {
+      debugPrint('Error: $e');
+      return {};
+    }
   }
 }

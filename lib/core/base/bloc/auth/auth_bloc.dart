@@ -22,7 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         HiveBoxes.getUserData().put('token', token);
         emit(AuthSuccessState(message: response['message']));
       } else {
-        emit(AuthErrorState(message: response['error']));
+        emit(AuthErrorState(message: 'Login not successful'));
         log('error');
       }
     });
@@ -32,7 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (response['status'] == 'Success') {
         emit(AuthSuccessState(message: response['message']));
       } else {
-        emit(AuthErrorState(message: response['error']));
+        emit(AuthErrorState(message: 'Registration not successfull'));
       }
     });
 

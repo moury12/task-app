@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_management/core/base/bloc/task/task_bloc.dart';
+import 'package:task_management/core/components/custom_button.dart';
+import 'package:task_management/core/components/custom_circular_progress.dart';
+import 'package:task_management/core/components/custom_drawer.dart';
 import 'package:task_management/core/components/custom_text_field.dart';
+import 'package:task_management/core/constants/image_constant.dart';
 import 'package:task_management/core/utils/boxes.dart';
 import 'package:task_management/core/utils/helper_function.dart';
 import 'package:task_management/view/auth/login_view.dart';
@@ -31,21 +36,8 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, UserProfileView.routeName);
-            },
-            icon: Icon(Icons.account_box)),
-        actions: [
-          TextButton(
-              onPressed: () {
-                HiveBoxes.getUserData().delete('token');
-                Navigator.pushReplacementNamed(context, LoginView.routeName);
-              },
-              child: Text('logout')),
-        ],
-      ),
+      appBar: AppBar(),
+      drawer: CustomDrawer(),
       body: BlocConsumer<TaskBloc, TaskState>(
         bloc: taskBloc,
         listener: (context, state) {
@@ -62,28 +54,30 @@ class _HomeViewState extends State<HomeView> {
         },
         builder: (context, state) {
           if (state is TaskInitial) {
-            return CircularProgressIndicator();
+            return DefaultCircularProgress();
           }
           if (state is AllTaskLoadedState) {
             return ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 12.sp),
               itemCount: state.taskList.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context,
-                        TaskView.routeName,arguments: state.taskList[index].sId );
+                    Navigator.pushNamed(context, TaskView.routeName,
+                        arguments: state.taskList[index].sId);
                   },
-                  child: Row(
-                    children: [
-                      Text(state.taskList[index].title ?? ''),
-                      IconButton(
+                  child:Card(
+                    child: ListTile(
+                      title: Text(state.taskList[index].title ?? ''),
+                    subtitle: Text(state.taskList[index].description ?? 'Description not provided') ,
+                      trailing: IconButton(
                           onPressed: () {
                             taskBloc.add(DeleteTaskEvent(
                                 taskId: state.taskList[index].sId ?? ''));
                           },
-                          icon: Icon(Icons.delete))
-                    ],
-                  ),
+                          icon: Icon(Icons.delete,color: Colors.black,)),
+                    ),
+                  )
                 );
               },
             );
@@ -92,6 +86,11 @@ class _HomeViewState extends State<HomeView> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        child: Image.asset(
+          addTaskImg,
+          height: 40,
+          width: 40,
+        ),
         onPressed: () {
           showDialog(
             context: context,
@@ -118,25 +117,23 @@ class _HomeViewState extends State<HomeView> {
                           title: "Description",
                           hintText: "Enter description",
                           controller: descriptionController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Description cannot be empty";
-                            }
-                            return null;
-                          },
+
                           isMultiline: true,
                         ),
                         const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              taskBloc.add(CreateTaskEvent(
-                                  title: titleController.text,
-                                  description: descriptionController.text));
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: const Text("Submit"),
+                        SizedBox(width: double.infinity,
+                          child: CustomButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                taskBloc.add(CreateTaskEvent(
+                                    title: titleController.text,
+                                    description: descriptionController.text));
+                                clear();
+                                Navigator.pop(context);
+                              }
+                            },
+                            title: "Submit",
+                          ),
                         ),
                       ],
                     ),
@@ -147,4 +144,9 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
+  void clear(){
+    titleController.clear();
+    descriptionController.clear();
+  }
 }
+

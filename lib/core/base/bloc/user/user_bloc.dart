@@ -38,7 +38,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       } else {
         emit(UserErrorState(message: 'Something went wrong'));
       }
-    });on<UpdateProfileEvent>((event, emit) async {
+    })
+    ;on<UpdateProfileEvent>((event, emit) async {
       String? token = HiveBoxes.getUserData().get('token');
       if(token != null && token.isNotEmpty){
         final responseData = await AuthService.updateProfile(

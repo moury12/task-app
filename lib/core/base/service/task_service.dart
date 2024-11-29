@@ -18,7 +18,7 @@ class TaskService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       };
-      final body = jsonEncode({'title': title, 'password': description});
+      final body = jsonEncode({'title': title, 'description': description});
       final response = await http.post(url, headers: headers, body: body);
       final responseData = json.decode(response.body);
       log(responseData.toString());
