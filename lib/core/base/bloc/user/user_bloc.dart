@@ -38,8 +38,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       } else {
         emit(UserErrorState(message: 'Account activation not successful'));
       }
-    })
-    ;on<UpdateProfileEvent>((event, emit) async {
+    });
+    on<UpdateProfileEvent>((event, emit) async {
+      emit(UserLoadingState());
       String? token = HiveBoxes.getUserData().get('token');
       if(token != null && token.isNotEmpty){
         final responseData = await AuthService.updateProfile(

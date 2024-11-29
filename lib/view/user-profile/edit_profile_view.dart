@@ -147,20 +147,32 @@ class _EditProfileViewState extends State<EditProfileView> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  CustomButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        context.read<UserBloc>().add(UpdateProfileEvent(
-                            firstName: firstNameController.text,
-                            lastName: lastNameController.text,
-                            address: addressController.text,
-                            file: _imageFile));
-                        debugPrint(_imageFile.toString());
+                  BlocBuilder<UserBloc, UserState>(
 
-                      }
-                    },
-                    title: 'Update',
-     ),
+                      builder: (context, state) {
+                        if (state is UserLoadingState) {
+                          return const CustomButton(
+                            label: CircularProgressIndicator(
+                                color: Colors.white),
+                            onPressed: null,
+                          );
+                        }
+                        return     CustomButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              context.read<UserBloc>().add(UpdateProfileEvent(
+                                  firstName: firstNameController.text,
+                                  lastName: lastNameController.text,
+                                  address: addressController.text,
+                                  file: _imageFile));
+                              debugPrint(_imageFile.toString());
+
+                            }
+                          },
+                          title: 'Update',
+                        );
+                      }),
+
                 ],
               ),
             ),
