@@ -1,16 +1,10 @@
 # task_management
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![WhatsApp Image 2024-11-29 at 6 57 35 PM](https://github.com/user-attachments/assets/80ab174c-d028-4ea9-8d63-b036ef4716b2)
+![WhatsApp Image 2024-11-29 at 6 57 34 PM (1)](https://github.com/user-attachments/assets/892ba159-ced5-4d5a-87e9-d144f8a413e7)
+![WhatsApp Image 2024-11-29 at 6 57 34 PM](https://github.com/user-attachments/assets/89c132b4-bbff-474f-891d-18ea328567b9)
+![WhatsApp Image 2024-11-29 at 6 57 35 PM (1)](https://github.com/user-attachments/assets/7efeb231-0b5d-4609-a013-c66dd6444c3e)
+![WhatsApp Image 2024-11-29 at 6 57 35 PM (1)](https://github.com/user-attachments/assets/4d49d4cd-462a-4812-a9b9-9133aae540bb)
+![WhatsApp Image 2024-11-29 at 6 57 36 PM (1)](https://github.com/user-attachments/assets/e098af66-f806-4321-a9bb-1eaf188caa24)
+![WhatsApp Image 2024-11-29 at 6 57 36 PM](https://github.com/user-attachments/assets/30096d70-965f-4adf-871d-56b2e34defc7)
+![WhatsApp Image 2024-11-29 at 6 57 36 PM (2)](https://github.com/user-attachments/assets/5de40605-a18f-466c-9af8-3c36e16e8f55)
+![WhatsApp Image 2024-11-29 at 6 57 37 PM](https://github.com/user-attachments/assets/841af952-644c-4ac7-beb5-585e58f73c73)
