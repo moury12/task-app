@@ -10,7 +10,7 @@ class AuthSuccessState extends AuthState {
 
   AuthSuccessState({required this.message});
 }
-
+class AuthLoadingState extends AuthState {}
 class AuthErrorState extends AuthState {
   final String message;
 

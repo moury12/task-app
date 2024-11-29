@@ -27,6 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
     on<AuthRegistrationEvent>((event, emit) async {
+      emit(AuthLoadingState());
       Map<String, dynamic> response =
           await AuthService.registrationRequest(body: event.body,file: event.file);
       if (response['status'] == 'Success') {
